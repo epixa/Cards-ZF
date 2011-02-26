@@ -1,0 +1,15 @@
+[submodule "vendor/Zend"]
+	path = vendor/Zend
+	url = git://github.com/epixa/Zend-Framework-v1-Mirror.git
+[submodule "vendor/Epixa"]
+	path = vendor/Epixa
+	url = git://github.com/epixa/Epixa.git
+[submodule "vendor/Doctrine-orm"]
+	path = vendor/Doctrine-orm
+	url = git://github.com/doctrine/doctrine2.git
+[submodule "vendor/Doctrine-dbal"]
+	path = vendor/Doctrine-dbal
+	url = git://github.com/doctrine/dbal.git
+[submodule "vendor/Doctrine-common"]
+	path = vendor/Doctrine-common
+	url = git://github.com/doctrine/common.git
