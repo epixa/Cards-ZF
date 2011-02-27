@@ -1,3 +1,3 @@
-drop database if exists basedb;
-create database basedb default character set utf8;
-use basedb;
+drop database if exists cardsdb;
+create database cardsdb default character set utf8;
+use cardsdb;

@@ -30,7 +30,7 @@ return array(
             'connection'   => array(
                 'driver'   => 'pdo_mysql',
                 'host'     => 'localhost',
-                'dbname'   => 'basedb',
+                'dbname'   => 'cardsdb',
                 'user'     => 'productionusr',
                 'password' => 'productionpass'
             )
