@@ -55,9 +55,9 @@ class Auth extends AbstractModel
     protected $loginId;
 
     /**
-     * @Column(type="string", name="pass_hash", length=256, nullable=true)
+     * @Column(type="string", name="pass_hash")
      */
-    protected $passHash = null;
+    protected $passHash;
 
 
     /**
@@ -133,7 +133,22 @@ class Auth extends AbstractModel
 
         return $this;
     }
-
+    
+    /**
+     * Set the password
+     * 
+     * @param  string $password
+     * @return Auth *Fluent interface*
+     */
+    public function setPassword($password)
+    {
+        $passhash = $this->hashPassword($password);
+        
+        $this->setPassHash($passhash);
+        
+        return $this;
+    }
+    
     /**
      * Hash the given password
      *

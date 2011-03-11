@@ -16,5 +16,13 @@ return array(
             'controller' => 'auth',
             'action' => 'logout'
         )
+    ),
+    'register' => array(
+        'route' => 'signup/*',
+        'defaults' => array(
+            'module' => 'user',
+            'controller' => 'account',
+            'action' => 'register'
+        )
     )
 );

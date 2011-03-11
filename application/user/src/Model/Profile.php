@@ -20,7 +20,7 @@ use Epixa\Model\AbstractModel;
  *
  * @property integer         $id
  * @property User\Model\User $user
- * @property string          $email
+ * @property null|string     $email
  */
 class Profile extends AbstractModel
 {
@@ -37,9 +37,9 @@ class Profile extends AbstractModel
     protected $user;
 
     /**
-     * @Column(type="string", name="email")
+     * @Column(type="string", name="email", nullable=true)
      */
-    protected $email;
+    protected $email = null;
 
 
     /**
@@ -68,13 +68,17 @@ class Profile extends AbstractModel
     /**
      * Set the email
      *
-     * @param  string $email
+     * @param  null|string $email
      * @return Profile *Fluent interface*
      */
-    public function setEmail($email)
+    public function setEmail($email = null)
     {
-        $this->email = (string)$email;
-
+        $this->email = $email;
+        
+        if ($email !== null) {
+            $this->email = (string)$this->email;
+        }
+        
         return $this;
     }
 }

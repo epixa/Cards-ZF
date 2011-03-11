@@ -5,7 +5,9 @@
 
 namespace User\Controller;
 
-use Epixa\Controller\AbstractController;
+use Epixa\Controller\AbstractController,
+    User\Form\BaseUser as BaseUserForm,
+    User\Service\User as UserService;
 
 /**
  * Manage user account functionality
@@ -23,7 +25,23 @@ class AccountController extends AbstractController
      * Register a new account
      */
     public function registerAction()
-    {}
+    {
+        $request = $this->getRequest();
+
+        $form = new BaseUserForm();
+        $this->view->form = $form;
+
+        if (!$request->isPost() || !$form->isValid($request->getPost())) {
+            return;
+        }
+
+        $service = new UserService();
+        $service->register($form->getValues());
+        
+        $this->_helper->flashMessenger->addMessage('Account created');
+
+        $this->_helper->redirector->gotoUrlAndExit('/login');
+    }
 
     /**
      * Change the password of your existing account

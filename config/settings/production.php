@@ -23,7 +23,7 @@ return array(
             )
         ),
         'doctrine' => array(
-            'loggerClass' => 'Doctrine\\DBAL\\Logging\\EchoSQLLogger',
+            //'loggerClass' => 'Doctrine\\DBAL\\Logging\\EchoSQLLogger',
             'proxy' => array(
                 'directory' => APPLICATION_ROOT . '/data/proxies'
             ),

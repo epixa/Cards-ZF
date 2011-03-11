@@ -1,5 +1,16 @@
-insert into `user` (`alias`) values
-    ('testusr');
+insert into user_group (id, `name`, code) values
+    (1, 'Admin', 'admin'),
+    (2, 'Verified', 'verified'),
+    (3, 'Unverified', 'unverified');
+
+insert into `user` (id, `alias`) values
+    (1, 'testusr');
+
+insert into user_group_assoc (user_id, group_id) values
+    (1, 1);
 
 insert into user_auth (user_id, login_id, pass_hash) values
-    (last_insert_id(), 'testusr', '$2a$08$8uHd26d5YtE8Q6nn91DUJ.C/peuhIk.5u5y1g.fg.cFKROPjG7UcO');
+    (1, 'testusr', '$2a$08$8uHd26d5YtE8Q6nn91DUJ.C/peuhIk.5u5y1g.fg.cFKROPjG7UcO');
+
+insert into user_profile (user_id, email) values
+    (1, 'test@epixa.com');

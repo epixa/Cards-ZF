@@ -19,15 +19,12 @@ class Login extends BaseForm
 {
     public function init()
     {
-        $this->addElement('text', 'username', array(
-            'required' => true,
-            'label' => 'Username'
-        ));
-
-        $this->addElement('password', 'password', array(
-            'required' => true,
-            'label' => 'Password'
-        ));
+        $userForm = new BaseUser();
+        $loginId = $userForm->getElement('login_id');
+        $this->addElement($loginId);
+        
+        $password = $userForm->getElement('password');
+        $this->addElement($password);
 
         $this->addElement('submit', 'submit', array(
             'ignore' => true,

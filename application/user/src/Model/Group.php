@@ -17,11 +17,12 @@ use Epixa\Model\AbstractModel,
  * @license    http://github.com/epixa/Cards/blob/master/LICENSE New BSD
  * @author     Court Ewing (court@epixa.com)
  *
- * @Entity
+ * @Entity(repositoryClass="User\Repository\Group")
  * @Table(name="user_group")
  *
  * @property integer $id
  * @property string  $name
+ * @property string  $code
  */
 class Group extends AbstractModel implements RoleInterface
 {
@@ -36,18 +37,25 @@ class Group extends AbstractModel implements RoleInterface
      * @Column(type="string", name="name")
      */
     protected $name;
+    
+    /**
+     * @Column(type="string", name="code")
+     */
+    protected $code;
 
 
     /**
      * Constructor
      *
-     * Set the group name
+     * Sets the group name and code
      *
      * @param string $name
+     * @param string $code
      */
-    public function __construct($name)
+    public function __construct($name, $code)
     {
-        $this->setName($name);
+        $this->setName($name)
+             ->setCode($code);
     }
 
     /**
@@ -81,6 +89,29 @@ class Group extends AbstractModel implements RoleInterface
     public function getName()
     {
         return $this->name;
+    }
+    
+    /**
+     * Set the group code
+     *
+     * @param  string $code
+     * @return Group *Fluent interface*
+     */
+    public function setCode($code)
+    {
+        $this->code = (string)$code;
+
+        return $this;
+    }
+
+    /**
+     * Get the group name
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
     }
 
     /**
