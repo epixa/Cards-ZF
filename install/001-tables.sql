@@ -59,6 +59,7 @@ create table user_profile (
     id int not null auto_increment,
     user_id int not null,
     email varchar(255) not null,
+    email_verification_key char(40),
     primary key(id),
     constraint profile_has_user foreign key(user_id) references `user`(id) on delete cascade
 ) engine=innodb;

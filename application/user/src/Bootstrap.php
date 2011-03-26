@@ -8,8 +8,10 @@ namespace User;
 use Epixa\Application\Module\Bootstrap as ModuleBootstrap,
     User\Model\Auth as AuthModel,
     Zend_Auth as Authenticator,
+    Zend_View as View,
     Epixa\Auth\Storage\Doctrine as DoctrineStorage,
-    Epixa\Phpass;
+    Epixa\Phpass,
+    Epixa\Service\AbstractEmailService as EmailService;
 
 /**
  * Bootstrap the user module
@@ -23,7 +25,7 @@ use Epixa\Application\Module\Bootstrap as ModuleBootstrap,
 class Bootstrap extends ModuleBootstrap
 {
     /**
-     * Initialize the doctrine auth identity storage
+     * Initializes the doctrine auth identity storage
      */
     public function _initAuthStorage()
     {
@@ -35,7 +37,7 @@ class Bootstrap extends ModuleBootstrap
     }
 
     /**
-     * Set up the default phpass object to be used in authentication models
+     * Sets up the default phpass object to be used in authentication models
      */
     public function _initPhpass()
     {
@@ -46,5 +48,18 @@ class Bootstrap extends ModuleBootstrap
                     : 8;
         $phpass = new Phpass($iterations);
         AuthModel::setDefaultPhpass($phpass);
+    }
+    
+    /**
+     * Sets up the email view paths for user module emails
+     */
+    public function _initEmail()
+    {
+        $front = $this->bootstrap('frontController')->getResource('frontController');
+        $view = EmailService::getDefaultView();
+        if ($view instanceof View) {
+            $path = dirname($front->getModuleDirectory('user'));
+            $view->setScriptPath($path . '/templates/email');
+        }
     }
 }

@@ -24,5 +24,13 @@ return array(
             'controller' => 'account',
             'action' => 'register'
         )
+    ),
+    'verify' => array(
+        'route' => 'verify/:id/:key',
+        'defaults' => array(
+            'module' => 'user',
+            'controller' => 'profile',
+            'action' => 'verify-email'
+        )
     )
 );

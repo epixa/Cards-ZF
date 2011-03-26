@@ -31,18 +31,34 @@ return array(
                 'driver'   => 'pdo_mysql',
                 'host'     => 'localhost',
                 'dbname'   => 'cardsdb',
-                'user'     => 'productionusr',
-                'password' => 'productionpass'
+                'user'     => defined('DB_USERNAME') ? DB_USERNAME : null,
+                'password' => defined('DB_PASSWORD') ? DB_PASSWORD : null
             )
         ),
         'modules' => array(),
         'router' => array(
             'file' => APPLICATION_ROOT . '/config/routes.php'
         ),
+        'mail' => array(
+            'transport' => array(
+                'type'     => 'smtp',
+                'host'     => defined('SMTP_HOSTNAME') ? SMTP_HOSTNAME : null,
+                'auth'     => 'login',
+                'username' => defined('SMTP_USERNAME') ? SMTP_USERNAME : null,
+                'password' => defined('SMTP_PASSWORD') ? SMTP_PASSWORD : null,
+                'ssl'      => 'ssl',
+                'port'     => '465'
+            ),
+            'defaultFrom' => array(
+                'email' => 'cards@epixa.com',
+                'name'  => 'Card games!'
+            )
+        ),
         'view' => array(),
         'layout' => array(
             'layoutPath' => APPLICATION_ROOT . '/layouts',
             'layout' => 'default'
         )
-    )
+    ),
+    'siteUrl' => defined('SITE_URL') ? SITE_URL : 'http://cards.epixa.com'
 );

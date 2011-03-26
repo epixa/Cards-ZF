@@ -1,0 +1,8 @@
+<p>Howdy,</p>
+
+<p>This email address has been used to register a new account at <a href="<?php echo $this->siteUrl; ?>">Epixa Cards</a>.</p>
+
+<p><a href="<?php echo $this->siteUrl; ?><?php echo $this->url(array('id' => $this->user->id, 'key' => $this->user->profile->emailVerificationKey), 'verify', true); ?>">Click here</a> to verify your account and email address.</p>
+
+<p>Thanks,
+<br /><?php echo $this->escape($this->emailConfig->name); ?></p>

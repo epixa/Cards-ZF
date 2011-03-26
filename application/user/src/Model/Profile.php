@@ -5,7 +5,8 @@
 
 namespace User\Model;
 
-use Epixa\Model\AbstractModel;
+use Epixa\Model\AbstractModel,
+    BadMethodCallException;
 
 /**
  * @category   Module
@@ -21,6 +22,7 @@ use Epixa\Model\AbstractModel;
  * @property integer         $id
  * @property User\Model\User $user
  * @property null|string     $email
+ * @property string          $emailVerificationKey
  */
 class Profile extends AbstractModel
 {
@@ -41,19 +43,22 @@ class Profile extends AbstractModel
      */
     protected $email = null;
 
+    /**
+     * @Column(type="string", name="email_verification_key", nullable=true)
+     */
+    protected $emailVerificationKey = null;
+
 
     /**
-     * Throws exception so id cannot be set directly
-     *
-     * @param integer $id
+     * @throws BadMethodCallException Because you cannot set id directly
      */
-    public function setId($id)
+    public function setId()
     {
-        throw new \LogicException('Cannot set id directly');
+        throw new BadMethodCallException('Cannot set id directly');
     }
 
     /**
-     * Set the user
+     * Sets the user
      *
      * @param  User $user
      * @return Profile *Fluent interface*
@@ -66,19 +71,55 @@ class Profile extends AbstractModel
     }
 
     /**
-     * Set the email
+     * Sets the email
      *
      * @param  null|string $email
      * @return Profile *Fluent interface*
      */
     public function setEmail($email = null)
     {
-        $this->email = $email;
-        
-        if ($email !== null) {
-            $this->email = (string)$this->email;
+        $oldEmail = $this->email;
+
+        $this->email = ($email === null ?: (string)$email);
+
+        if ($oldEmail !== $this->email) {
+            $key = $this->createEmailVerificationKey();
+            $this->setEmailVerificationKey($key);
         }
-        
+
         return $this;
+    }
+
+    /**
+     * Sets the email verification key
+     * 
+     * @param  null|string $key
+     * @return Profile *Fluent interface*
+     */
+    public function setEmailVerificationKey($key = null)
+    {
+        $this->emailVerificationKey = ($key === null ?: (string)$key);
+
+        return $this;
+    }
+
+    /**
+     * Creates and returns a new email verification key
+     * 
+     * @return string
+     */
+    public function createEmailVerificationKey()
+    {
+        return sha1($this->email . uniqid() . microtime());
+    }
+
+    /**
+     * Is the email address verified?
+     * 
+     * @return boolean
+     */
+    public function emailIsVerified()
+    {
+        return $this->emailVerificationKey === null;
     }
 }

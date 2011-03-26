@@ -47,7 +47,14 @@ class User extends AbstractDoctrineService
         $data['alias'] = $data['login_id'];
         $data['groups'] = array($group);
         
-        return $this->add($data);
+        $user = $this->add($data);
+        
+        if (!$user->profile->emailIsVerified()) {
+            $emailService = new Email();
+            $emailService->sendRegistrationEmail($user);
+        }
+        
+        return $user;
     }
     
     /**
@@ -116,5 +123,18 @@ class User extends AbstractDoctrineService
         }
 
         return new Session($auth->user);
+    }
+
+    public function createEmailVerificationKey(UserModel $user)
+    {
+        if (!$user->profile->email) {
+            throw new InvalidArgumentException('User does not have an email set');
+        }
+
+        if ($user->profile->emailVerificationKey) {
+            throw new InvalidArgumentException('Email is already verified');
+        }
+        
+        return sha1(serialize(array($user->id, $user->profile->email)));
     }
 }
