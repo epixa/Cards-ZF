@@ -10,7 +10,7 @@ use Epixa\Model\AbstractModel,
     Zend_Acl_Role_Interface as RoleInterface,
     Zend_Acl_Resource_Interface as ResourceInterface,
     Doctrine\Common\Collections\ArrayCollection,
-    User\Model\Profile,
+    User\Service\Group as GroupService,
     LogicException;
 
 /**
@@ -21,7 +21,7 @@ use Epixa\Model\AbstractModel,
  * @license    http://github.com/epixa/Cards/blob/master/LICENSE New BSD
  * @author     Court Ewing (court@epixa.com)
  *
- * @Entity
+ * @Entity(repositoryClass="User\Repository\User")
  * @Table(name="user")
  *
  * @property integer         $id
@@ -182,5 +182,18 @@ class User extends AbstractModel implements RoleInterface, MultiRoles, ResourceI
     public function getResourceId()
     {
         return __CLASS__;
+    }
+
+    /**
+     * Is the current user account verified?
+     * 
+     * @return bool
+     */
+    public function isVerified()
+    {
+        $groupService = new GroupService();
+        $group = $groupService->getByCode(GroupService::UNVERIFIED);
+        
+        return !$this->groups->contains($group);
     }
 }

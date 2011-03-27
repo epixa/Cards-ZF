@@ -5,7 +5,8 @@
 
 namespace User\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityRepository,
+    Doctrine\ORM\QueryBuilder;
 
 /**
  * @category   Module
@@ -17,4 +18,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class User extends EntityRepository
 {
+    /**
+     * Restricts the given query to the result that matches the given id
+     *
+     * @param QueryBuilder $qb
+     * @param integer      $id
+     */
+    public function restrictToId(QueryBuilder $qb, $id)
+    {
+        $qb->andWhere('u.id = :id')
+           ->setParameter('id', $id);
+    }
 }

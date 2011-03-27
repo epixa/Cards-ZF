@@ -21,7 +21,8 @@ use Epixa\Service\AbstractDoctrineService,
 class Group extends AbstractDoctrineService
 {
     const UNVERIFIED = 'unverified';
-    
+    const VERIFIED   = 'verified';
+
     /**
      * Gets a group by the given code
      * 

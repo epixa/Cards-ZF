@@ -80,7 +80,7 @@ class Profile extends AbstractModel
     {
         $oldEmail = $this->email;
 
-        $this->email = ($email === null ?: (string)$email);
+        $this->email = ($email === null ? $email : (string)$email);
 
         if ($oldEmail !== $this->email) {
             $key = $this->createEmailVerificationKey();
@@ -98,7 +98,7 @@ class Profile extends AbstractModel
      */
     public function setEmailVerificationKey($key = null)
     {
-        $this->emailVerificationKey = ($key === null ?: (string)$key);
+        $this->emailVerificationKey = ($key === null ? $key : (string)$key);
 
         return $this;
     }

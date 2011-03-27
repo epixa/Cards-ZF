@@ -5,7 +5,9 @@
 
 namespace User\Controller;
 
-use Epixa\Controller\AbstractController;
+use Epixa\Controller\AbstractController,
+    User\Service\User as UserService,
+    LogicException;
 
 /**
  * Controller for viewing and editing user profiles
@@ -30,4 +32,35 @@ class ProfileController extends AbstractController
      */
     public function editAction()
     {}
+
+    /**
+     * Verifies a given user's email address
+     */
+    public function verifyEmailAction()
+    {
+        $request = $this->getRequest();
+
+        $id = $request->getParam('id', null);
+        if (!$id) {
+            throw new LogicException('No user id specified');
+        }
+
+        $key = $request->getParam('key', null);
+        if (!$key) {
+            throw new LogicException('No email verification key specified');
+        }
+
+        $service = new UserService();
+        $user = $service->get($id);
+
+        if ($user->profile->emailIsVerified()) {
+            $this->_helper->flashMessenger->addMessage('Your email address is already verified');
+            return;
+        }
+
+        $service->verifyEmail($user, $key);
+
+        $this->_helper->flashMessenger->addMessage('Email verified');
+        $this->_helper->redirector->gotoUrlAndExit('/');
+    }
 }

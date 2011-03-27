@@ -12,6 +12,7 @@ use Epixa\Service\AbstractDoctrineService,
     User\Model\Profile as ProfileModel,
     Epixa\Exception\NotFoundException,
     InvalidArgumentException,
+    LogicException,
     Doctrine\ORM\NoResultException;
 
 /**
@@ -24,6 +25,73 @@ use Epixa\Service\AbstractDoctrineService,
  */
 class User extends AbstractDoctrineService
 {
+    /**
+     * Gets a user by id
+     *
+     * @param  integer $id
+     * @return UserModel
+     * @throws NotFoundException
+     */
+    public function get($id)
+    {
+        $em = $this->getEntityManager();
+
+        $repo = $em->getRepository('User\Model\User');
+
+        $qb = $repo->createQueryBuilder('u');
+
+        $repo->restrictToId($qb, $id);
+
+        try {
+            $user = $qb->getQuery()->getSingleResult();
+        } catch (NoResultException $e) {
+            throw new NotFoundException(
+                sprintf('User `%s` not found', $id), null, $e
+            );
+        }
+
+        return $user;
+    }
+
+    /**
+     * Verifies a user's email address by the given verification key
+     * 
+     * @param  UserModel $user
+     * @param  string $key
+     * @throws InvalidArgumentException|LogicException
+     */
+    public function verifyEmail(UserModel $user, $key)
+    {
+        $profile = $user->profile;
+
+        if (!$profile->email) {
+            throw new InvalidArgumentException('User does not have an email set');
+        }
+
+        if ($profile->emailIsVerified()) {
+            throw new InvalidArgumentException('Email address is already verified');
+        }
+
+        if ($profile->emailVerificationKey !== $key) {
+            throw new InvalidArgumentException('Verification keys do not match');
+        }
+
+        $em = $this->getEntityManager();
+        if (!$em->contains($profile)) {
+            throw new LogicException('Profile entity is not managed');
+        }
+
+        $profile->emailVerificationKey = null;
+
+        if (!$user->isVerified()) {
+            $groupService = new Group();
+            $group = $groupService->getByCode(Group::VERIFIED);
+            $user->groups = array($group);
+        }
+
+        $em->flush();
+    }
+
     /**
      * Registers a new user account with the provided data
      * 
@@ -123,18 +191,5 @@ class User extends AbstractDoctrineService
         }
 
         return new Session($auth->user);
-    }
-
-    public function createEmailVerificationKey(UserModel $user)
-    {
-        if (!$user->profile->email) {
-            throw new InvalidArgumentException('User does not have an email set');
-        }
-
-        if ($user->profile->emailVerificationKey) {
-            throw new InvalidArgumentException('Email is already verified');
-        }
-        
-        return sha1(serialize(array($user->id, $user->profile->email)));
     }
 }
