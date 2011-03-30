@@ -7,6 +7,7 @@ namespace User\Controller;
 
 use Epixa\Controller\AbstractController,
     User\Form\BaseUser as BaseUserForm,
+    User\Form\ForgotPassword as ForgotPasswordForm,
     User\Service\User as UserService;
 
 /**
@@ -53,7 +54,23 @@ class AccountController extends AbstractController
      * Gain access to your existing account if you forget the password
      */
     public function forgotPasswordAction()
-    {}
+    {
+        $request = $this->getRequest();
+
+        $form = new ForgotPasswordForm();
+        $this->view->form = $form;
+
+        if (!$request->isPost() || !$form->isValid($request->getPost())) {
+            return;
+        }
+
+        $service = new UserService();
+        $service->resetPassword($form->getValues());
+
+        $this->_helper->flashMessenger->addMessage('A temporary password has been sent to your email address');
+
+        $this->_helper->redirector->gotoUrlAndExit('/login');
+    }
 
     /**
      * Delete your existing account

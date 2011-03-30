@@ -26,6 +26,38 @@ use Epixa\Service\AbstractDoctrineService,
 class User extends AbstractDoctrineService
 {
     /**
+     * Resets a user's password
+     * 
+     * @param  array $data
+     * @throws InvalidArgumentException
+     */
+    public function resetPassword(array $data)
+    {
+        if (!isset($data['login_id'])) {
+            throw new InvalidArgumentException('No login_id provided');
+        }
+
+        if (!isset($data['email'])) {
+            throw new InvalidArgumentException('No email provided');
+        }
+
+        $user = $this->getByEmail($data['email']);
+        if ($user->auth->loginId !== $data['login_id']) {
+            throw new LogicException('The login_id is invalid');
+        }
+
+        $password = $this->createRandomPassword($user);
+
+        $user->auth->password = $password;
+        $user->auth->isTemporaryPass = true;
+
+        $emailService = new Email();
+        $emailService->sendPasswordResetEmail($user, $password);
+
+        $this->getEntityManager()->flush();
+    }
+
+    /**
      * Gets a user by id
      *
      * @param  integer $id
@@ -47,6 +79,34 @@ class User extends AbstractDoctrineService
         } catch (NoResultException $e) {
             throw new NotFoundException(
                 sprintf('User `%s` not found', $id), null, $e
+            );
+        }
+
+        return $user;
+    }
+
+    /**
+     * Get a user by email
+     * 
+     * @param  string $email
+     * @return UserModel
+     * @throws NotFoundException
+     */
+    public function getByEmail($email)
+    {
+        $em = $this->getEntityManager();
+
+        $repo = $em->getRepository('User\Model\User');
+
+        $qb = $repo->createQueryBuilder('u');
+
+        $repo->restrictToEmail($qb, $email);
+
+        try {
+            $user = $qb->getQuery()->getSingleResult();
+        } catch (NoResultException $e) {
+            throw new NotFoundException(
+                sprintf('User `%s` not found', $email), null, $e
             );
         }
 
@@ -114,6 +174,7 @@ class User extends AbstractDoctrineService
         
         $data['alias'] = $data['login_id'];
         $data['groups'] = array($group);
+        $data['is_temporary_pass'] = false;
         
         $user = $this->add($data);
         
@@ -191,5 +252,16 @@ class User extends AbstractDoctrineService
         }
 
         return new Session($auth->user);
+    }
+
+    /**
+     * Creates a random password for the given user
+     * 
+     * @param  UserModel $user
+     * @return string
+     */
+    public function createRandomPassword(UserModel $user)
+    {
+        return substr(sha1(uniqid() . microtime() . serialize($user)), 0, 12);
     }
 }

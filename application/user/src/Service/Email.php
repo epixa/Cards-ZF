@@ -23,6 +23,7 @@ class Email extends AbstractEmailService
      * Sends a registration email to the given user
      * 
      * @param  UserModel $user
+     * @return void
      * @throws InvalidArgumentException If email is verified or not set
      */
     public function sendRegistrationEmail(UserModel $user)
@@ -38,5 +39,25 @@ class Email extends AbstractEmailService
         $this->getView()->user = $user;
 
         $this->send('registration', $user->profile->email, $user->alias, 'New Registration');
+    }
+
+    /**
+     * Sends a password reset notification email to the given user
+     *
+     * @param  UserModel $user
+     * @param  string    $password
+     * @return void
+     * @throws InvalidArgumentException If email is not set
+     */
+    public function sendPasswordResetEmail(UserModel $user, $password)
+    {
+        if (!$user->profile->email) {
+            throw new InvalidArgumentException("User has not set an email");
+        }
+
+        $this->getView()->user     = $user;
+        $this->getView()->password = $password;
+
+        $this->send('password-reset', $user->profile->email, $user->alias, 'Password Reset');
     }
 }

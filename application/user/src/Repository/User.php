@@ -29,4 +29,18 @@ class User extends EntityRepository
         $qb->andWhere('u.id = :id')
            ->setParameter('id', $id);
     }
+
+    /**
+     * Restricts the given query to the result that matches the given email
+     *
+     * @param QueryBuilder $qb
+     * @param string       $email
+     */
+    public function restrictToEmail(QueryBuilder $qb, $email)
+    {
+        $qb->innerJoin('u.profile', 'up')
+           ->addSelect('up')
+           ->andWhere('up.email = :email')
+           ->setParameter('email', $email);
+    }
 }

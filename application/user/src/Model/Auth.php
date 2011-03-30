@@ -24,6 +24,7 @@ use Epixa\Model\AbstractModel,
  * @property User\Model\User $user
  * @property string          $loginId
  * @property string          $passHash
+ * @property boolean         $isTemporaryPass
  */
 class Auth extends AbstractModel
 {
@@ -45,7 +46,7 @@ class Auth extends AbstractModel
     protected $id;
 
     /**
-     * @OneToOne(targetEntity="User\Model\User")
+     * @OneToOne(targetEntity="User\Model\User", inversedBy="auth")
      */
     protected $user;
 
@@ -58,6 +59,11 @@ class Auth extends AbstractModel
      * @Column(type="string", name="pass_hash")
      */
     protected $passHash;
+
+    /**
+     * @Column(type="boolean", name="is_temporary_pass")
+     */
+    protected $isTemporaryPass = true;
 
 
     /**
@@ -146,6 +152,19 @@ class Auth extends AbstractModel
         
         $this->setPassHash($passhash);
         
+        return $this;
+    }
+
+    /**
+     * Set the flag for whether this password is temporary
+     *
+     * @param  boolea $flag
+     * @return Auth *Fluent interface*
+     */
+    public function setIsTemporaryPass($flag)
+    {
+        $this->isTemporaryPass = (bool)$flag;
+
         return $this;
     }
     

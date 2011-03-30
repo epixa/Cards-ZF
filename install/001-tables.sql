@@ -50,6 +50,7 @@ create table user_auth (
     user_id int not null,
     login_id varchar(255) not null,
     pass_hash varchar(255) not null,
+    is_temporary_pass boolean not null default true,
     primary key(id),
     constraint auth_has_user foreign key(user_id) references `user`(id) on delete cascade
 ) engine=innodb;

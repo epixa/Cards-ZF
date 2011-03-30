@@ -27,6 +27,7 @@ use Epixa\Model\AbstractModel,
  * @property integer         $id
  * @property string          $alias
  * @property Profile         $profile
+ * @property Auth            $auth
  * @property ArrayCollection $groups
  */
 class User extends AbstractModel implements RoleInterface, MultiRoles, ResourceInterface
@@ -49,6 +50,11 @@ class User extends AbstractModel implements RoleInterface, MultiRoles, ResourceI
     protected $profile;
 
     /**
+     * @OneToOne(targetEntity="User\Model\Auth", mappedBy="user")
+     */
+    protected $auth;
+
+    /**
      * @ManyToMany(targetEntity="User\Model\Group")
      * @JoinTable(name="user_group_assoc",
      *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
@@ -69,11 +75,9 @@ class User extends AbstractModel implements RoleInterface, MultiRoles, ResourceI
     }
 
     /**
-     * Throws exception so id cannot be set directly
-     *
-     * @param integer $id
+     * @throws LogicException Because id cannot be set directly
      */
-    public function setId($id)
+    public function setId()
     {
         throw new LogicException('Cannot set id directly');
     }
