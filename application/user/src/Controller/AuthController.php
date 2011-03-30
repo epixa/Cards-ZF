@@ -28,6 +28,10 @@ class AuthController extends AbstractController
      */
     public function loginAction()
     {
+        if (Authenticator::getInstance()->hasIdentity()) {
+            $this->_helper->redirector->gotoUrlAndExit('/');
+        }
+
         $request = $this->getRequest();
 
         $form = new LoginForm();

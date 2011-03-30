@@ -8,7 +8,10 @@ namespace User\Controller;
 use Epixa\Controller\AbstractController,
     User\Form\BaseUser as BaseUserForm,
     User\Form\ForgotPassword as ForgotPasswordForm,
-    User\Service\User as UserService;
+    User\Form\ChangePassword as ChangePasswordForm,
+    User\Service\User as UserService,
+    Zend_Auth as Auth,
+    Epixa\Exception\DeniedException;
 
 /**
  * Manage user account functionality
@@ -48,7 +51,29 @@ class AccountController extends AbstractController
      * Change the password of your existing account
      */
     public function changePasswordAction()
-    {}
+    {
+        if (!Auth::getInstance()->hasIdentity()) {
+            throw new DeniedException('You must be logged in to change your password');
+        }
+
+        $request = $this->getRequest();
+
+        $user = Auth::getInstance()->getIdentity();
+
+        $form = new ChangePasswordForm(null, $user);
+        $this->view->form = $form;
+
+        if (!$request->isPost() || !$form->isValid($request->getPost())) {
+            return;
+        }
+
+        $service = new UserService();
+        $service->changePassword($user, $form->getValues());
+
+        $this->_helper->flashMessenger->addMessage('Your password has been changed.');
+
+        $this->_helper->redirector->gotoUrlAndExit('/');
+    }
 
     /**
      * Gain access to your existing account if you forget the password

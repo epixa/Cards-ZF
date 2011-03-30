@@ -28,7 +28,7 @@ class BaseUser extends BaseForm
             'required' => true,
             'label' => 'Username',
             'validators' => array(
-                array('StringLength', false, array(1, 255))
+                array('StringLength', true, array(1, 255))
             )
         ));
 
@@ -36,7 +36,7 @@ class BaseUser extends BaseForm
             'required' => true,
             'label' => 'Password',
             'validators' => array(
-                array('StringLength', false, array(6, 255))
+                array('StringLength', true, array(6, 255))
             )
         ));
         

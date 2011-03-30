@@ -58,6 +58,32 @@ class User extends AbstractDoctrineService
     }
 
     /**
+     * Changes the given user's password and removes any existing
+     * temporary password status
+     *
+     * @param  UserModel $user
+     * @param  array     $data
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    public function changePassword(UserModel $user, array $data)
+    {
+        if (!isset($data['password'])) {
+            throw new InvalidArgumentException('No password provided');
+        }
+
+        $em = $this->getEntityManager();
+        if (!$em->contains($user)) {
+            throw new InvalidArgumentException('User entity is not managed');
+        }
+
+        $user->auth->password = $data['password'];
+        $user->auth->isTemporaryPass = false;
+
+        $em->flush();
+    }
+
+    /**
      * Gets a user by id
      *
      * @param  integer $id
