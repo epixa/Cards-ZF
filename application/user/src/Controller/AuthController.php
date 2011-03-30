@@ -28,7 +28,8 @@ class AuthController extends AbstractController
      */
     public function loginAction()
     {
-        if (Authenticator::getInstance()->hasIdentity()) {
+        $authenticator = Authenticator::getInstance();
+        if ($authenticator->hasIdentity()) {
             $this->_helper->redirector->gotoUrlAndExit('/');
         }
 
@@ -49,9 +50,17 @@ class AuthController extends AbstractController
             return;
         }
 
-        Authenticator::getInstance()->getStorage()->write($session);
+        $authenticator->getStorage()->write($session);
 
-        $this->_helper->redirector->gotoUrlAndExit('/');
+        if ($authenticator->getIdentity()->auth->isTemporaryPass) {
+            $message = 'You are currently using a temporary password, so you should change it now.';
+            $params = array('module' => 'user', 'controller' => 'account', 'action' => 'change-password');
+
+            $this->_helper->flashMessenger->addMessage($message);
+            $this->_helper->redirector->gotoRouteAndExit($params, 'default', true);
+        } else {
+            $this->_helper->redirector->gotoUrlAndExit('/');
+        }
     }
 
     /**
