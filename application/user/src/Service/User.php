@@ -26,6 +26,25 @@ use Epixa\Service\AbstractDoctrineService,
 class User extends AbstractDoctrineService
 {
     /**
+     * Deletes the given user's account
+     *
+     * @param UserModel $user
+     */
+    public function deleteAccount(UserModel $user)
+    {
+        $em = $this->getEntityManager();
+
+        $query = $em->createQuery('DELETE User\Model\Session us WHERE us.user = :user');
+        $query->setParameter('user', $user);
+        $query->execute();
+
+        $em->remove($user->profile);
+        $em->remove($user->auth);
+
+        $em->flush();
+    }
+
+    /**
      * Resets a user's password
      * 
      * @param  array $data

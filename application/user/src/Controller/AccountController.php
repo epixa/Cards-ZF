@@ -9,6 +9,7 @@ use Epixa\Controller\AbstractController,
     User\Form\BaseUser as BaseUserForm,
     User\Form\ForgotPassword as ForgotPasswordForm,
     User\Form\ChangePassword as ChangePasswordForm,
+    User\Form\DeleteAccount as DeleteAccountForm,
     User\Service\User as UserService,
     Zend_Auth as Auth,
     Epixa\Exception\DeniedException;
@@ -52,13 +53,14 @@ class AccountController extends AbstractController
      */
     public function changePasswordAction()
     {
-        if (!Auth::getInstance()->hasIdentity()) {
+        $auth = Auth::getInstance();
+        if (!$auth->hasIdentity()) {
             throw new DeniedException('You must be logged in to change your password');
         }
 
         $request = $this->getRequest();
 
-        $user = Auth::getInstance()->getIdentity();
+        $user = $auth->getIdentity();
 
         $form = new ChangePasswordForm(null, $user);
         $this->view->form = $form;
@@ -80,6 +82,10 @@ class AccountController extends AbstractController
      */
     public function forgotPasswordAction()
     {
+        if (Auth::getInstance()->hasIdentity()) {
+            $this->_helper->redirector->gotoUrlAndExit('/');
+        }
+
         $request = $this->getRequest();
 
         $form = new ForgotPasswordForm();
@@ -101,5 +107,30 @@ class AccountController extends AbstractController
      * Delete your existing account
      */
     public function deleteAction()
-    {}
+    {
+        $auth = Auth::getInstance();
+        if (!$auth->hasIdentity()) {
+            throw new DeniedException('You must be logged in to delete your account');
+        }
+
+        $request = $this->getRequest();
+
+        $user = $auth->getIdentity();
+
+        $form = new DeleteAccountForm(null, $user);
+        $this->view->form = $form;
+
+        if (!$request->isPost() || !$form->isValid($request->getPost())) {
+            return;
+        }
+
+        $auth->clearIdentity();
+
+        $service = new UserService();
+        $service->deleteAccount($user);
+
+        $this->_helper->flashMessenger->addMessage('Your account has been deleted.  :-(');
+
+        $this->_helper->redirector->gotoUrlAndExit('/');
+    }
 }
