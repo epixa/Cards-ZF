@@ -32,5 +32,13 @@ return array(
             'controller' => 'profile',
             'action' => 'verify-email'
         )
+    ),
+    'lobby' => array(
+        'route' => 'lobby/:key',
+        'defaults' => array(
+            'module' => 'game',
+            'controller' => 'lobby',
+            'action' => 'view'
+        )
     )
 );

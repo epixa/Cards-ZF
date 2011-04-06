@@ -76,5 +76,19 @@ create table user_session (
     constraint session_has_user foreign key(user_id) references `user`(id) on delete cascade
 ) engine=innodb;
 
+
+-- game module
+
+drop table if exists game_lobby;
+create table game_lobby (
+    id int not null auto_increment,
+    `name` varchar(100) not null,
+    password varchar(255) not null,
+    date_created datetime not null,
+    created_by_id int not null,
+    primary key(id),
+    constraint lobby_has_created foreign key(created_by_id) references `user`(id) on delete cascade
+) engine=innodb auto_increment=10000;
+
 -- Set the foreign key checks back to the original value
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
