@@ -8,6 +8,7 @@ namespace Game\Controller;
 use Epixa\Controller\AbstractController,
     Game\Service\Lobby as LobbyService,
     Game\Form\Lobby as LobbyForm,
+    Game\Form\LobbyAuth as LobbyAuthForm,
     Zend_Session_Namespace as SessionNamespace;
 
 /**
@@ -49,10 +50,45 @@ class LobbyController extends AbstractController
     {
         $request = $this->getRequest();
 
+        $key = $request->getParam('key', null);
+        if (!in_array($key, $this->gameSession->lobbies)) {
+            $this->_forward('login');
+            return;
+        }
+
         $service = new LobbyService();
         $lobby = $service->getByKey($request->getParam('key', null));
 
         $this->view->lobby = $lobby;
+    }
+
+    /**
+     * Renders and processes the lobby login form
+     */
+    public function loginAction()
+    {
+        $request = $this->getRequest();
+
+        $key = $request->getParam('key', null);
+        if (in_array($key, $this->gameSession->lobbies)) {
+            $this->_helper->redirector->gotoRouteAndExit(array('key' => $key), 'lobby', true);
+        }
+
+        $service = new LobbyService();
+        $lobby = $service->getByKey($key);
+
+        $form = new LobbyAuthForm();
+        $form->setLobby($lobby);
+        $this->view->form = $form;
+        $this->view->lobby = $lobby;
+
+        if (!$request->isPost() || !$form->isValid($request->getPost())) {
+            return;
+        }
+        
+        $this->gameSession->lobbies[] = $lobby->urlKey;
+        
+        $this->_helper->redirector->gotoRouteAndExit(array('key' => $lobby->urlKey), 'lobby', true);
     }
 
     /**

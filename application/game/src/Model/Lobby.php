@@ -179,4 +179,15 @@ class Lobby extends AbstractModel implements ResourceInterface
 
         return $this->_urlKey;
     }
+
+    /**
+     * Compares the given password with the current lobby password
+     * 
+     * @param  string $password
+     * @return bool
+     */
+    public function comparePassword($password)
+    {
+        return $this->password === $password;
+    }
 }
