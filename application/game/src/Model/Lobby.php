@@ -27,7 +27,8 @@ use Epixa\Model\AbstractModel,
  * @property-read integer $id
  *
  * @property string          $name
- * @property string          password
+ * @property string          $password
+ * @property Game\Model\Game $game
  * @property DateTime        $dateCreated
  * @property User\Model\User $createdBy
  * @property string          $urlKey
@@ -50,6 +51,11 @@ class Lobby extends AbstractModel implements ResourceInterface
      * @Column(type="string", name="password")
      */
     protected $password;
+
+    /**
+     * @OneToOne(targetEntity="Game\Model\Game", mappedBy="lobby")
+     */
+    protected $game;
 
     /**
      * @Column(type="datetime", name="date_created")
@@ -114,6 +120,19 @@ class Lobby extends AbstractModel implements ResourceInterface
     }
 
     /**
+     * Sets the current game
+     *
+     * @param  Game\Model\Game $game
+     * @return Lobby *Fluent interface*
+     */
+    public function setGame(Game $game)
+    {
+        $this->game = $game;
+
+        return $this;
+    }
+
+    /**
      * Sets the user that created this lobby
      *
      * @param  string $user
@@ -151,16 +170,6 @@ class Lobby extends AbstractModel implements ResourceInterface
     }
 
     /**
-     * Get the resource identifier for this model
-     *
-     * @return string
-     */
-    public function getResourceId()
-    {
-        return __CLASS__;
-    }
-
-    /**
      * Gets the unique url key for this lobby
      *
      * @throws LogicException If model id is not set
@@ -189,5 +198,15 @@ class Lobby extends AbstractModel implements ResourceInterface
     public function comparePassword($password)
     {
         return $this->password === $password;
+    }
+
+    /**
+     * Get the resource identifier for this model
+     *
+     * @return string
+     */
+    public function getResourceId()
+    {
+        return __CLASS__;
     }
 }

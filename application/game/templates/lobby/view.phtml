@@ -1,1 +1,19 @@
-<?php var_dump($this->lobby); ?>
+
+<h2>Game Lobby: <?php echo $this->escape($this->lobby->name); ?></h2>
+
+<?php if (!$this->lobby->game): ?>
+    <p>No game here, sucka.</p>
+<?php else: ?>
+    <h3><?php echo $this->escape($this->lobby->game->type->name); ?></h3>
+    
+    <h4>Current players:</h4>
+    <?php if (count($this->lobby->game->players) == 0): ?>
+        <p>No one is currently playing.</p>
+    <?php else: ?>
+        <ul>
+        <?php foreach ($this->lobby->game->players as $player): ?>
+            <li><?php echo $this->escape($player->user->alias); ?></li>
+        <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+<?php endif; ?>
