@@ -37,6 +37,17 @@ class Bootstrap extends ModuleBootstrap
     }
 
     /**
+     * Set the user identity on the view
+     */
+    public function _initViewIdentity()
+    {
+        $view = $this->getApplication()->bootstrap('view')->getResource('view');
+        if ($view) {
+            $view->identity = Authenticator::getInstance()->getIdentity();
+        }
+    }
+
+    /**
      * Sets up the default phpass object to be used in authentication models
      */
     public function _initPhpass()

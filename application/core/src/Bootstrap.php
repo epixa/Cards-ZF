@@ -29,8 +29,12 @@ class Bootstrap extends ModuleBootstrap
      */
     public function _initAclManager()
     {
+        $view = $this->getApplication()->bootstrap('view')->getResource('view');
+
         $aclManager = new AclManager(new Acl(), new AclService());
         AbstractService::setDefaultAclManager($aclManager);
+
+        $view->acl = $aclManager;
 
         return $aclManager;
     }

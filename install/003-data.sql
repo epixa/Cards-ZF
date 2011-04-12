@@ -1,3 +1,6 @@
+insert into core_acl_rule (resource_id, role_id, privilege, `assertion`) values
+    ('lobby', 'verified', 'create-game', 'Game\Assertion\IsOwner');
+
 insert into user_group (id, `name`, code) values
     (1, 'Admin', 'admin'),
     (2, 'Verified', 'verified'),

@@ -2,7 +2,11 @@
 <h2>Game Lobby: <?php echo $this->escape($this->lobby->name); ?></h2>
 
 <?php if (!$this->lobby->game): ?>
-    <p>No game here, sucka.</p>
+    <?php if ($this->acl->isAllowed($this->identity, 'game', 'create')): ?>
+        <p>There is no active game.  You should <a href="<?php echo $this->url(array('controller' => 'game', 'action' => 'create')); ?>">start one</a>.</p>
+    <?php else: ?>
+        <p>No game here, sucka.</p>
+    <?php endif; ?>
 <?php else: ?>
     <h3><?php echo $this->escape($this->lobby->game->type->name); ?></h3>
     

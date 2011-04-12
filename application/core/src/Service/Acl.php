@@ -23,7 +23,7 @@ class Acl extends AbstractDoctrineService implements AclService
      * Load the specific resource information and related rules into the acl
      *
      * @param  \Zend_Acl $acl
-     * @param  string     $resource
+     * @param  string    $resource
      */
     public function loadResourceRules(\Zend_Acl $acl, $resource)
     {
@@ -32,13 +32,13 @@ class Acl extends AbstractDoctrineService implements AclService
         }
         
         $em   = $this->getEntityManager();
-        $repo = $em->getRepository('Core\Model\Acl');
+        $repo = $em->getRepository('Core\Model\AclRule');
 
-        $qb = $repo->createQueryBuilder('ca');
+        $qb = $repo->createQueryBuilder('car');
 
         $repo->restrictToResource($qb, $resource);
 
-        foreach ($qb->getQuery()->getResults() as $rule) {
+        foreach ($qb->getQuery()->getResult() as $rule) {
             $acl->allow(
                 $rule->roleId,
                 $rule->resourceId,

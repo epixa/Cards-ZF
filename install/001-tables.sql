@@ -11,8 +11,7 @@ create table core_acl_rule (
     role_id varchar(255) not null,
     privilege varchar(255),
     `assertion` varchar(255),
-    primary key(id),
-    unique key(resource_id, role_id)
+    primary key(id)
 ) engine=innodb;
 
 
