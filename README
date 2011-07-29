@@ -1,14 +1,3 @@
-Epixa - Cards
+Project on-hold indefinitely.
 
-Copyright 2011 epixa.com - Court Ewing
-License: http://github.com/epixa/Cards/blob/master/LICENSE New BSD
-Authored by Court Ewing (court@epixa.com)
-
-A web-based card game platform written for modern browsers.  The system can 
-support any number of games as pluginable components.  Each game plugin is 
-coupled to the core application, but the core application is not coupled to any 
-specific games.
-
-The frontend is developed for modern browsers with jQuery and CSS3.
-
-The backend is developed with the Epixa library and Zend Framework on PHP 5.3.
+If I go through with a card game app, it will not be based on ZF1, so I don't imagine I'll get back to this repo.
